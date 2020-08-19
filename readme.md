@@ -1,6 +1,6 @@
 Jubilee on Klipper
 =======
-##Overview
+## Overview
 The goal of this project is to enable people building Jubilee tool changers to use Klipper firmware and commodity electronics to build a very capable and advanced tool changing 3d printer.
 
 1. What is Jubilee?
@@ -14,7 +14,7 @@ information on why you should use Klipper.
 [Klipper on Github](https://github.com/KevinOConnor/klipper)
 
 
-##Custom gcode commands.
+## Custom gcode commands.
 1. Tool Locking
    The tool locking macros are specific to the Jubilee lock mechanism. They are contained in a seperate macro file and need to be added to your config using an include section in your main config.
    ~~~
@@ -109,8 +109,8 @@ information on why you should use Klipper.
     3. Idle Timeout
     The idle timeout I've provided in the sample config turns off the motors, heaters and fans. It also returns any tool it has back into its dock or unlocks the twistlock if it is locked. 
 
-##Sample Printer Config
-###Overview
+## Sample Printer Config
+### Overview
 I've provided a sample Klipper config based on two BigTree Tech SKR Pro 1.1 boards. The main board handles the X,Y, Twist lock steppers & end stops as well as an extruder. The second board handles Z1,Z2,Z3 and an extruder as well as the heated bed's SSR and the z endstop switch on the tool carriage. I plan on documenting more as I have time. 
 
 *The sample printer config can be found in  [/configs/printer-jubilee-skr-pro.cfg](/configs/printer-jubilee-skr-pro.cfg)*
@@ -137,12 +137,12 @@ gcode:
 	TOOL_PICKUP ZONE_X=5 ZONE_Y=260 PARK_X=5 PARK_Y=341 OFFSET_X=4.5 OFFSET_Y=-44.02 OFFSET_Z=2.65
 	ACTIVATE_EXTRUDER EXTRUDER=extruder
 ```
-###Performance & Tuning
+### Performance & Tuning
     TBD..
-##Slicer Support
+## Slicer Support
 At this time this has only been tested using Cura 3.6.0 and Cura 4.6.2. There is at least one bug that causes print failure in Cura 4.x currently. Essentially the issue has to do with Cura making moves to X0 Y0 with tools that cannot reach the location due to tool offsets.
 
-####Using it with Cura 4.6
+#### Using it with Cura 4.6
 
-#####What to do about Cura's bug?
+##### What to do about Cura's bug?
 Currently I simply search for X0.00 Y0.00 in the gcode file after slicing and comment it out. While this is not the greatest solution the only other option is to move back to Cura 3.6.
