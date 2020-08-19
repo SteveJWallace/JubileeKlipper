@@ -42,7 +42,7 @@ information on why you should use Klipper.
 
     *The tool lock macros can be found in [configs/tooldock.cfg](/configs/tooldock.cfg)*
     1. DOCK_INIT
-        Just like tool init you need to add this to your 
+        Just like tool init you need to add this to your config using an include.
         ~~~
         [include tooldock.cfg]
         ~~~
