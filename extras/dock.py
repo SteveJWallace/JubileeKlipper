@@ -21,15 +21,32 @@ class Dock:
             self.gcode.run_script_from_command(script.render())
         except Exception:
             logging.exception("Script running error")
-
-    def move(self, coord, speed, gcmd):
+    
+    def _extractMove(self, params):
         toolhead = self.printer.lookup_object('toolhead')
         curpos = toolhead.get_position()
+        if 'X' in params.keys():
+            curpos[0] = params['X']
+        if 'Y' in params.keys():
+            curpos[1] = params['Y']
+        if 'Z' in params.keys():
+            curpos[2] = params['Z']
+        if 'F' in params.keys():
+            speed = params['F']
+        else:
+            speed = self.gcode.speed
+        logging.info("Moving to X:{},Y:{},Z:{}@F{}".format(curpos[0],curpos[1],curpos[2],speed))
+        self.move(curpos,speed)
+
+
+    def move(self, coord, speed):
+        toolhead = self.printer.lookup_object('toolhead')
+        logging.exception(coord)
+        curpos = toolhead.get_position()
         for i in range(len(coord)):
-            gcmd.respond_info('i:"%i" v:"%i"'% (i,coord[i]),)
             if coord[i] is not None:
                 curpos[i] = coord[i]+self.gcode.base_position[i]
-        gcmd.respond_info('speed:"%i"'% (speed),)
+        logging.exception(curpos)
         toolhead.move(curpos, self.gcode.speed_factor * speed)
         self.gcode.reset_last_position()
 
@@ -50,12 +67,12 @@ class Dock:
     def cmd_TOOL_DROPOFF(self, gcmd):
          if self.tool_present:
             self.set_gcode_offset([0.,0.,0.])
-            self.move(self.zone_location, self.travel_speed, gcmd)
+            self.move(self.zone_location, self.travel_speed)
             #move to the parking zone.
-            self.move(self.parking_location, self.parking_speed, gcmd)
+            self.move(self.parking_location, self.parking_speed)
             self._exec(self.tool_unlock)
             #move back to the pickup zone
-            self.move(self.zone_location, self.travel_speed, gcmd)
+            self.move(self.zone_location, self.travel_speed)
             #Save the location of the tool so dropoff knows what to do later.
             self.parking_location = [0.0, 0.0]
             self.zone_location    = [0.0, 0.0]
