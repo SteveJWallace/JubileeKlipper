@@ -66,13 +66,16 @@ class Dock:
     cmd_TOOL_DROPOFF_help = "Place a tool back in the dock"
     def cmd_TOOL_DROPOFF(self, gcmd):
          if self.tool_present:
+            #TODO:Restore offsets so that we preserve other offset adjustments
             self.set_gcode_offset([0.,0.,0.])
-            self.move(self.zone_location, self.travel_speed)
-            #move to the parking zone.
-            self.move(self.parking_location, self.parking_speed)
+            #Loop though approach_path and move between points.
+            for move in self.approach_path:
+                self._extractMove(move)
+            #execute the tool lock macro.
             self._exec(self.tool_unlock)
-            #move back to the pickup zone
-            self.move(self.zone_location, self.travel_speed)
+            #Loop though return_path and move between points.
+            for move in self.return_path:
+                self._extractMove(move)
             #Save the location of the tool so dropoff knows what to do later.
             self.parking_location = [0.0, 0.0]
             self.zone_location    = [0.0, 0.0]
