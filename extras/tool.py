@@ -70,6 +70,11 @@ class Tool:
 
     cmd_TOOL_PICKUP_help= "Pick up a tool from the dock, using paths"
     def cmd_TOOL_PICKUP(self, gcmd):
+         if self.dock.home is not None:
+             home = self.dock.home
+         else:
+             toolhead = self.printer.lookup_object('toolhead')
+             home = toolhead.get_position()
          if self.dock.tool_present:
              self.dock.cmd_TOOL_DROPOFF(gcmd)
          else:
@@ -88,6 +93,7 @@ class Tool:
          self.dock.set_gcode_offset(self.offset)
          #execute the users post zone macro
          self._exec(self.post_zone)
+         self.dock.move(home, self.dock.travel_speed)
          #Save the location of the tool so dropoff knows what to do later.
          #Save the lock and unlock macros, since they can be defined per tool.
          #Save the offset so we can reverse it later during dropoff.

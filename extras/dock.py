@@ -6,14 +6,16 @@ class Dock:
         self.printer.add_object("dock", self)
         self.gcode   = self.printer.lookup_object('gcode') 
         gcode_macro = self.printer.load_object(config, 'gcode_macro')
-        self.parking_location = {"0.0", "0.0", "0.0"}
-        self.zone_location    = {"0.0", "0.0", "0.0"}
-        self.parking_speed    = config.getint('parking_speed', 1000)
-        self.travel_speed     = config.getint('travel_speed',2000)
-        self.tool_lock  =  gcode_macro.load_template(config, 'lock_gcode',None)
-        self.tool_unlock  =  gcode_macro.load_template(config, 'unlock_gcode',None)
-        self.tool_offset      = {"0.0", "0.0", "0.0"}
-        self.tool_present     = False
+        if config.get('home', None) is not None:            
+            self.home = [ float(i) for i in config.get('home').split(',')]
+        else:
+            self.home = None
+        self.parking_speed = config.getint('parking_speed', 1000)
+        self.travel_speed  = config.getint('travel_speed',2000)
+        self.tool_lock     = gcode_macro.load_template(config, 'lock_gcode',None)
+        self.tool_unlock   =  gcode_macro.load_template(config, 'unlock_gcode',None)
+        self.tool_offset   = {"0.0", "0.0", "0.0"}
+        self.tool_present  = False
         self.gcode.register_command('BETA_TOOL_DROPOFF', self.cmd_TOOL_DROPOFF,
                                    desc=self.cmd_TOOL_DROPOFF_help)
     def _exec(self, script):
